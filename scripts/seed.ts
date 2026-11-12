@@ -72,6 +72,8 @@ async function seed() {
 
   // Drop and recreate tables for a clean seed
   sqlite.exec(`
+    DROP TABLE IF EXISTS bookmarks;
+    DROP TABLE IF EXISTS notes;
     DROP TABLE IF EXISTS comments;
     DROP TABLE IF EXISTS course_ratings;
     DROP TABLE IF EXISTS video_watch_events;
@@ -2068,6 +2070,45 @@ This course is still in draft while the cluster examples are rewritten against t
 
   console.log(`Created ${countRows(schema.lessonProgress)} lesson progress records.`);
 
+  // ─── Bookmarks and Notes ───
+
+  // Emma (students[0]) flags lessons to come back to and keeps notes on a few.
+  db.insert(schema.bookmarks)
+    .values([
+      { userId: students[0].id, lessonId: course1LessonIds[4], createdAt: daysAgo(30) },
+      { userId: students[0].id, lessonId: course1LessonIds[12], createdAt: daysAgo(20) },
+      { userId: students[0].id, lessonId: course2LessonIds[3], createdAt: daysAgo(6) },
+    ])
+    .run();
+
+  db.insert(schema.notes)
+    .values([
+      {
+        userId: students[0].id,
+        lessonId: course1LessonIds[4],
+        body: "Rewatch the part on narrowing.\n\n# not a heading — notes are plain text",
+        createdAt: daysAgo(30),
+        updatedAt: daysAgo(18),
+      },
+      {
+        userId: students[0].id,
+        lessonId: course2LessonIds[3],
+        body: "Status codes: 2xx ok, 4xx my fault, 5xx theirs.",
+        createdAt: daysAgo(6),
+        updatedAt: daysAgo(6),
+      },
+    ])
+    .run();
+
+  // Olivia (students[2]) has a single bookmark and no notes.
+  db.insert(schema.bookmarks)
+    .values({ userId: students[2].id, lessonId: course1LessonIds[2], createdAt: daysAgo(25) })
+    .run();
+
+  console.log(
+    `Created ${countRows(schema.bookmarks)} bookmarks and ${countRows(schema.notes)} notes.`
+  );
+
   // ─── Quiz Attempts ───
 
   // Helper to record a quiz attempt with answers
@@ -2847,6 +2888,7 @@ This course is still in draft while the cluster examples are rewritten against t
   console.log(`  Enrollments: ${countRows(schema.enrollments)}`);
   console.log(`  Course ratings: ${countRows(schema.courseRatings)}`);
   console.log(`  Lesson comments: ${countRows(schema.comments)}`);
+  console.log(`  Bookmarks: ${countRows(schema.bookmarks)}, notes: ${countRows(schema.notes)}`);
   console.log(
     `  Lesson progress: ${countRows(schema.lessonProgress)} (${countRows(schema.lessonProgress, eq(schema.lessonProgress.status, LessonProgressStatus.Completed))} completed)`
   );
