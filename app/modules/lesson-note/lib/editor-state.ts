@@ -22,6 +22,10 @@ export type NoteEditorInput = {
   maxLength: number;
 };
 
+/**
+ * What the Lesson Note editor shows for the Student's current draft: the
+ * character count, whether Save is enabled, and the one status line beside it.
+ */
 export function describeNoteEditor({
   draft,
   saved,
