@@ -83,10 +83,10 @@ describe("describeNoteEditor", () => {
     expect(state.status).toEqual({ kind: "too-long" });
   });
 
-  it("measures the limit on the trimmed draft but counts what the Student typed", () => {
+  it("counts the trimmed draft, the same text the limit measures", () => {
     const state = editor({ draft: ` ${"a".repeat(10)} ` });
     expect(state.tooLong).toBe(false);
-    expect(state.length).toBe(12);
+    expect(state.length).toBe(10);
   });
 
   it("is saving while the save is in flight, and Save is off", () => {

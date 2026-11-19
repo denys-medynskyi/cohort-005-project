@@ -40,7 +40,7 @@ export function describeNoteEditor({
   const canSave = !saving && changed && trimmed.length > 0 && !tooLong;
 
   return {
-    length: draft.length,
+    length: trimmed.length,
     tooLong,
     canSave,
     status: statusOf(),
