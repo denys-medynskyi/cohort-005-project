@@ -46,7 +46,6 @@ import {
 import {
   computeResult,
   getBestAttempt,
-  getQuizById,
   getQuizByLessonId,
   getQuizWithQuestions,
 } from "~/modules/lesson-page/quiz.server";
@@ -436,8 +435,8 @@ export async function action({ params, request }: Route.ActionArgs) {
     }
     // Scope the quiz to this lesson so a quiz elsewhere can't be reached by
     // posting its id to this route.
-    const quiz = getQuizById(quizId);
-    if (!quiz || quiz.lessonId !== lessonId) {
+    const quiz = getQuizByLessonId(lessonId);
+    if (!quiz || quiz.id !== quizId) {
       throw data("Quiz not found", { status: 404 });
     }
 
